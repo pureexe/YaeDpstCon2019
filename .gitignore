@@ -1,0 +1,13 @@
+
+*.aux
+*.lot
+*.log
+*.lof
+*.gz
+*.idx
+*.blg
+*.toc
+*.bbl
+*.nav
+*.out
+*.snm
