@@ -1,0 +1,944 @@
+% Author: Pakkapon Phongthawee
+
+% !TEX program = xelatex
+
+\documentclass[xcolor=dvipsnames, xetex,serif]{beamer}
+%\documentclass[handout,xetex,serif]{beamer} %ใช้บรรทัดนี้สำหรับปริ้นเอกสาร
+\usepackage{color,amsmath,graphics,graphicx}
+\usepackage{epsfig,amsfonts,graphics}
+\usepackage{mathrsfs,hyperref}
+\usepackage{subcaption,float,framed,algorithm2e,hyperref}
+%===============================================
+\usepackage{fontspec,xltxtra,xunicode}
+\defaultfontfeatures{Scale=1.23}
+\XeTeXlinebreaklocale “th_TH” % สำหรับตัดคำ
+\setmainfont[Scale=1.23]{THSarabunNew}
+% 1.23 เท่าคือจาก 12 pt บน LaTeX ให้เท่ากับ 16pt บน Word
+%=====================================================
+%\usepackage{pgfpages} %ใช้บรรทัดนี้สำหรับปริ้นเอกสาร
+%\pgfpagesuselayout{4 on 1}[a4paper,border shrink=5mm,landscape]
+%\pgfpagesuselayout{2 on 1}[a4paper,border shrink=5mm]
+%ใช้บรรทัดนี้สำหรับปริ้นเอกสาร
+
+%%%%%%%%%%%%%%% THEOREM Environments %%%%%%%%%% 					
+% \newtheorem{conjecture}[theorem]{บทคาดการณ์}								
+% \newtheorem{remark}[theorem]{หมายเหตุ}										
+% \numberwithin{equation}{section}							
+% \renewcommand\tablename{ตารางที่}
+% \renewcommand\figurename{รูปที่}						
+% \renewcommand{\bibname}{บรรณานุกรม}						
+% \renewcommand{\indexname}{ดรรชนี}
+\setbeamertemplate{caption}[numbered]	
+\setbeamertemplate{theorems}[numbered]				
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\mode<presentation>{
+	\usetheme{Madrid}
+    \usecolortheme[named=PineGreen]{structure}
+}
+\title[วิธีเชิงตัวเลขสำหรับต่อเติมภาพ]{A new numerical algorithm for TV-based image inpainting with its applications for restoring ancient Thai painting images and removing subtitles from animes}
+\author[Pakkapon]{Pakkapon Phongthawee}
+\institute[Silpakorn]{
+ 	Department of Mathematics\\
+ 	Silpakorn University \\}
+\date[UAMC 2019]{DPST Student Conference on Science and Technology\\June 21-23,2019}
+ 
+ \AtBeginSubsection[]{
+ 	\begin{frame}<beamer>
+ 		\frametitle{Outlines}
+ 		\tableofcontents [currentsection,currentsubsection]
+     \end{frame}
+}
+%\setbeamertemplate{item}[square]
+%============================================================================
+\begin{document}
+    \begin{frame}
+        \titlepage 
+    \end{frame}
+    \begin{frame}
+        \frametitle{Image inpainting} 
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.3\linewidth}
+                \centering
+                \includegraphics[width=0.8\linewidth]{images/grayscale_inpaint/toinpaint.png}
+                \caption{Damaged image}
+            \end{subfigure}
+            \begin{subfigure}{0.3\linewidth}
+                \centering
+                \includegraphics[width=0.8\linewidth]{images/grayscale_inpaint/inpaintdomain.png}
+                \caption{Inpainted domain}
+            \end{subfigure}
+            \begin{subfigure}{0.3\linewidth}
+                \centering
+                \includegraphics[width=0.8\linewidth]{images/grayscale_inpaint/result_splitbergman.png}
+                \caption{Restored image}
+            \end{subfigure}
+            \caption{Example of image inpainting}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Image inpainting problem}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.8\linewidth]{images/grayscale_inpaint/toinpaint.png}
+                \caption*{{\large grayscale image}}
+            \end{subfigure}
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.8\linewidth]{images/image_inpaint_synthetic/case02-toinpaint.png}
+                \caption*{{\large color image}}
+            \end{subfigure}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{grayscale image}
+        \begin{itemize}
+            \item image domain $\Omega \subset \mathbb{R}^2$ 
+            \item inpainting domain  $ D \subset \mathbb{R}^2$
+            \item physical position $ \mathbf{x} = (x,y) \in \Omega $ 
+            \item image intensity  $V \subset [0,\infty)$ 
+            \item grayscale image $ u: \Omega \rightarrow V,\ z: \Omega \rightarrow V$
+            \item without lose of generality  $ \Omega = [1,n]^2 $ and $ V = [0,1] $ which $n>0$ is positive integer 
+        \end{itemize}
+         \begin{figure}[h]
+            \[
+            \includegraphics[width=0.3\linewidth]{images/sample-domain.png}
+            \]
+            \caption{$D$ is an inpainting domain}
+        \end{figure}
+    \end{frame}    
+    \begin{frame}
+        \frametitle{Total variation model for grayscale image inpainting}
+        \begin{align*}
+        \min_{u} \{ \mathcal{J}(u) = \frac{1}{2} \int_{\Omega}\lambda (u-z)^2 d\Omega +  \int_{\Omega}  |\nabla u|  d\Omega \}
+        \end{align*}
+         \vspace{1cm}
+        \begin{align*}
+        \lambda=\lambda(\mathbf{x}) = \left \{ \begin{array}{ll}  \lambda_0, & x \in \Omega \textbackslash D \\ 0, & x \in D  \end{array} \right . 
+        \end{align*}
+        \let\thefootnote\relax\footnotetext{\tiny{T.F. Chan and J. Shen , “Mathematical models of local non-texture inpaintings”, SIAM Journal on Applied Mathematics, vol. 62, no. 3, pp. 1019–1043, 2001.}}	
+    \end{frame}    
+    \begin{frame}
+        \frametitle{Numerical method}
+        \begin{itemize}
+            \item[(1)] Explicit time marching
+            \item[(2)] Fixed point iteration
+            \item[(3)] Split Bregman
+        \end{itemize}
+    \end{frame}
+    \begin{frame}
+		\frametitle{Explicit time marching}
+		\begin{align*}
+		\min_{u} \{ \mathcal{J}(u) = \frac{1}{2} \int_{\Omega}\lambda (u-z)^2 d\Omega +  \int_{\Omega}  |\nabla u|  d\Omega \}
+		\end{align*}
+		$$ \Big \downarrow$$
+		\begin{align*}
+		\left \{ \begin{array}{ll}  - \nabla \cdot  \Big( \dfrac{\nabla u}{|\nabla u|} \Big) + \lambda (u-z) = 0,  & \hspace{1cm} \mathbf{x} \in (1,n)^2 \\ \dfrac{\partial u}{\partial \boldsymbol{n}} = 0, & \hspace{1cm} x \in \partial \Omega \end{array} \right .
+        \end{align*}
+        \let\thefootnote\relax\footnotetext{\tiny{L. I. Rudin, S. Osher, E. Fatemi, “Nonlinear total variation based noise removal algorithms", Physica D: Nonlinear Phenomena, vol 60, issues 1–4, pp. 259-268, 1992.}}						
+    \end{frame} 
+    \begin{frame}
+        \frametitle{Explicit time marching}
+        \begin{align*}
+        u(\mathbf{x},t_{k+1})=u(\mathbf{x},t_{k})+\tau\left(\nabla \cdot\left(\dfrac{\nabla u (\mathbf{x},t_k)}{| \nabla u (\mathbf{x},t_k) | }\right) + \lambda(\mathbf{x})(u (\mathbf{x},t_k)-z(\mathbf{x})) \right)
+        \end{align*}
+        \begin{align*}
+        u(\mathbf{x},t_0)=z \hspace{1cm} t_k=t_0+k\tau\ (\tau>0)  \hspace{1cm}  t_0=0
+        \end{align*}
+        \vspace{1cm}
+        \begin{align*}
+            u(\mathbf{x},t_0), u(\mathbf{x},t_1), u(\mathbf{x},t_2), u(\mathbf{x},t_3), ... ,  \textcolor{red}{u(\mathbf{x},t^{*})}
+        \end{align*}
+    \end{frame} 
+    \begin{frame}
+        \frametitle{Limitation of explicit time marching}
+        \begin{align*}
+        u(\mathbf{x},t_{k+1})=u(\mathbf{x},t_{k})+ \textcolor{red}{\tau}\left(\nabla \cdot\left(\dfrac{\nabla u (\mathbf{x},t_k)}{| \nabla u (\mathbf{x},t_k) | }\right) + \lambda(\mathbf{x})(u (\mathbf{x},t_k)-z(\mathbf{x})) \right)
+        \end{align*}
+        \vspace{1cm}
+        \begin{align*}
+            \textcolor{red}{\tau < 1}
+        \end{align*}
+    \end{frame} 
+    \begin{frame}
+        \frametitle{Fixed-point iteration}
+        \begin{align*}
+            - \nabla\cdot\left(\dfrac{\nabla u^{[\nu+1]}}{{| \nabla u |}^{[v]} }\right) + \lambda(u^{[\nu+1]}-z)  = 0,\ u^{[0]}=z
+        \end{align*}
+        \vspace{1cm}
+        \begin{align*}
+        u^{[0]}, u^{[1]}, u^{[2]}, u^{[3]}, ..., \textcolor{red}{u^{*}}    
+        \end{align*}
+        \let\thefootnote\relax\footnotetext{\tiny{C.R. Vogel and M.E. Oman,“Iterative methods for total variation denoising", SIAM Journal on Scientific Computing. vol. 17, pp. 227-238, 1996.}}
+        %\note{นอกจากนี้ยังมีคณะวิจัยของ Vogel และ Oman ได้แนะนำวิธีการทำซ้ำแบบจุดตรึงสำหรับการกำจัดสัญญาณรบกวนไว้ ซึ่งสามารถนำมาประยุกต์กับวิธีการต่อเติมภาพ เริ่มจากการแนะนำดัชนีการทำซ้ำแบบจุดตรึง u=0,1,2,... และนิยามรูปแบบการทำซ้ำโดย }
+    \end{frame} 
+    \begin{frame}
+        \frametitle{Numerical problem}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.2\linewidth]{images/grayscale_inpaint/result_splitbergman.png}
+            \caption{Example of image which has numerical problem}
+        \end{figure}
+        \begin{align*}
+            \tfrac{1}{| \nabla u |}=\tfrac{1}{\sqrt{u_x^2+u_y^2}} \rightarrow \infty
+        \end{align*}
+        \begin{align*}
+            |\nabla u| \approx| \nabla u |_\beta=\sqrt{u_x^2+u_y^2+\beta},\ 0< \beta \ll 1
+        \end{align*}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Split Bregman}
+        \begin{align*}
+            \min_{u} \{ \mathcal{J}(u) = \frac{1}{2} \int_{\Omega}\lambda (u-z)^2 d\Omega +  \int_{\Omega}  |\nabla u|  d\Omega \}
+        \end{align*}
+        $$ \Big \downarrow$$
+		\begin{align*}
+		    \min_{u,\boldsymbol{w}} \{ \mathcal{J}(u,\boldsymbol{w}) = \dfrac{1}{2} \int_{\Omega} \lambda(u-z)^2 d\Omega +  \int_{\Omega}  |\boldsymbol{w}| d\Omega \} \hspace{1cm}\text{ เมื่อ } w = \nabla u
+        \end{align*}
+        $$ \Big \downarrow$$
+		\begin{align*}
+		    \min_{u,\boldsymbol{w}} \{ \mathcal{J}(u,\boldsymbol{w}) = \dfrac{1}{2} \int_{\Omega} \lambda(u-z)^2 d\Omega +  \int_{\Omega}  |\boldsymbol{w}|  d\Omega + \frac{\theta}{2} \int_{\Omega} (\boldsymbol{w} - \nabla u + \boldsymbol{b})^2 d\Omega \}
+        \end{align*}
+        \let\thefootnote\relax\footnotetext{\tiny{T. Goldstein and S. Osher,“The Split Bregman Method for L1-Regularized Problems", SIAM Journal on Imaging Sciences. vol. 2, issue 2, pp. 323-343, 2009.}}			
+	\end{frame}  	
+    \begin{frame}
+        \frametitle{Split Bregman}
+            \begin{align*}
+        \min_{u,\boldsymbol{w}} \{ \mathcal{J}(u,\boldsymbol{w}) = \dfrac{1}{2} \int_{\Omega} \lambda(u-z)^2 d\Omega +  \int_{\Omega}  |\nabla \boldsymbol{w}|  d\Omega + \frac{\theta}{2} \int_{\Omega} (\boldsymbol{w} - \nabla u + \boldsymbol{b}) d\Omega \}
+        \end{align*}
+        $$ \Big \downarrow$$
+        \begin{align*}
+        u^{\text{New}}=\underset{u}{\arg\min} \{ \mathcal{J}_1(u) = \dfrac{1}{2} \int_{\Omega} \lambda(u-z)^2 d\Omega + \frac{\theta}{2} \int_{\Omega} (\boldsymbol{w}^{\text{old}} - \nabla u + \boldsymbol{b}^{\text{old}}) d\Omega \}
+        \end{align*}
+        \begin{align*}
+        \boldsymbol{w}^{\text{New}}=\underset{\boldsymbol{w}}{\arg\min} \{ \mathcal{J}_2(\boldsymbol{w}) = \int_{\Omega}  |\nabla \boldsymbol{w}|  d\Omega  + \frac{\theta}{2} \int_{\Omega} (\boldsymbol{w} - \nabla u^{\text{New}} + \boldsymbol{b}^{\text{old}}) d\Omega \}
+        \end{align*}
+        \begin{align*}
+        \boldsymbol{b}^{\text{New}}=\boldsymbol{b}^{\text{old}}+\nabla u^{\text{New}}-\boldsymbol{w}^{\text{New}}
+        \end{align*}
+        %\note{เราจะใช้วิธีการหาค่าต่ำที่สุดแบบสลับ โดยทำการตรึงค่า w จากนั้นเริ่มแก้ปัญหาย่อย แล้วนำ u ที่ได้มาตรึงค่า u เพื่อแก้ปัญหาย่อย w จากนั้นจึงทำการเปลี่ยนค่าตัวแปร b แล้วเริ่มทำซ้ำที่การหา u ใหม่อีกครั้ง จนกระทั่งค่านอร์มระหว่างรูป u ปัจจุบันและก่อนหน้าน้อยกว่าค่าที่กำหนด}
+    \end{frame}  
+    \begin{frame}
+        \frametitle{Color image}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.4\linewidth]{images/rgb-space.png}
+            \caption{Color image create from red,green and blue color\footnote{\tiny{ภาพจาก \url{https://commons.wikimedia.org/wiki/File:Additive_RGB_Circles-48bpp.png}  สืบค้นเมื่อวันที่ 25 กันยายน 2561}}}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Color image}
+        \begin{align*}
+             \boldsymbol{u},\ \boldsymbol{z} : \Omega  \rightarrow V
+        \end{align*}
+        \begin{align*}
+            \Big \downarrow
+        \end{align*}
+        \begin{align*}
+             \boldsymbol{u} = \begin{bmatrix} \textcolor{red}{u_1} \\ \textcolor{OliveGreen}{u_2} \\ \textcolor{blue}{u_3}   \end{bmatrix}, \ \boldsymbol{z} =\begin{bmatrix} \textcolor{red}{z_1} \\ \textcolor{OliveGreen}{z_2} \\ \textcolor{blue}{z_3} \end{bmatrix} : \Omega  \rightarrow V^3
+        \end{align*} 
+    \end{frame}
+    \begin{frame}
+        \frametitle{Total variation model for color image inpainting}
+        \begin{align*}
+        \min_{u} \{ \mathcal{J}(u) = \frac{1}{2} \int_{\Omega}\lambda (u-z)^2 d\Omega +  \int_{\Omega}  |\nabla u|  d\Omega \}
+        \end{align*}
+        \begin{align*}
+        \Big \downarrow
+        \end{align*}
+        \begin{align*}
+        \min_{u} \{ \mathcal{J}(u) = \underset{l=1}{\overset{3}{\sum}} 
+        ( \frac{1}{2} \int_{\Omega}\lambda (u_l-z_l)^2 d\Omega +  \int_{\Omega}  |\nabla u_l|  d\Omega ) \}
+        \end{align*}
+    \end{frame}
+    \begin{frame}
+    \frametitle{Split Bregman for Color image}
+        \begin{align*}
+        \min_{u,\boldsymbol{w}} \{ \mathcal{J}(u,\boldsymbol{w}) = \dfrac{1}{2} \int_{\Omega} \lambda(u-z)^2 d\Omega +  \int_{\Omega}  |\nabla \boldsymbol{w}|  d\Omega + \frac{\theta}{2} \int_{\Omega} (\boldsymbol{w} - \nabla u + \boldsymbol{b}) d\Omega \}
+        \end{align*}
+        \begin{align*}
+        \Big \downarrow
+        \end{align*}
+        \begin{align*}
+        \min_{\boldsymbol{u},\boldsymbol{w_1},\boldsymbol{w_2},\boldsymbol{w_3}} \{ \mathcal{J}(\boldsymbol{u},\boldsymbol{w_1},\boldsymbol{w_2},\boldsymbol{w_3}) &= \underset{l=1}{\overset{3}{\sum}} (  \dfrac{1}{2} \int_{\Omega} \lambda(u_l-z_l)^2 d\Omega +  \int_{\Omega}  |\nabla \boldsymbol{w_l}|  d\Omega \\ &+ \frac{\theta}{2} \int_{\Omega} (\boldsymbol{w_l} - \nabla u_l+ \boldsymbol{b_l}) d\Omega ) \}
+        \end{align*}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Quality measurement}
+        \begin{itemize}
+            \item[(1)] Peak Signal Noise Ratio (PSNR)
+            \item[(2)] Structural Similarity (SSIM)
+        \end{itemize}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Peak Signal Noise Ratio (PSNR)}
+        \begin{align*}
+        \text{PSNR}  = 10 \cdot log_{10} ( \frac{1}{\sqrt{\text{MSE}}} )  \hspace{1cm}
+        \end{align*}
+        \begin{itemize}
+            \item[$\bullet$] MSE คือค่าคลาดเคลื่อนกำลังสองเฉลี่ยของภาพ โดยที่ MSE = $\frac{1}{nx \times ny} \sum (u - \tilde{u})^2 $
+            \item[$\bullet$] $u$ แทนภาพต้นฉบับ
+            \item[$\bullet$] $\tilde{u}$  แทนภาพที่ได้จากการซ่อมแซมโดยวิธีเชิงตัวเลข
+            \item[$\bullet$] PSNR มีหน่วยเป็น dB
+        \end{itemize}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Structural Similarity (SSIM)}
+        \begin{align*}
+        \text{SSIM}(u,\tilde{u}) = \frac{(2\mu_u\mu_{\tilde{u}} + 0.0001)(2\sigma_{u\tilde{u}} + 0.0009)}{(\mu_u^2+\mu_{\tilde{u}}^2+0.0001)(\sigma_u^2+\sigma_{\tilde{u}}^2+0.0009)}
+        \end{align*}
+        \begin{itemize}
+            \item[$\bullet$] $u$ แทนภาพต้นฉบับ
+            \item[$\bullet$] $\tilde{u}$  แทนภาพต้นฉบับ และภาพที่ได้จากการซ่อมแซมโดยวิธีเชิงตัวเลข
+            \item[$\bullet$] $\mu_u$ คือค่าเฉลี่ยของ $u$
+            \item[$\bullet$] $\mu_{\tilde{u}}$ คือค่าเฉลี่ยของ $\tilde{u}$
+            \item[$\bullet$]  $\sigma_u$ คือความแปรปรวนของ $u$ 
+            \item[$\bullet$] $\sigma_{\tilde{u}}$ คือความแปรปรวนของ $\tilde{u}$
+        \end{itemize}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Synthetic image}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/image_inpaint_synthetic/case01-original.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/image_inpaint_synthetic/case02-original.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/image_inpaint_synthetic/case03-original.png}	
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/image_inpaint_synthetic/case04-original.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/image_inpaint_synthetic/case05-original.png}	
+            \end{subfigure}
+            \caption{Original image}
+        \end{figure}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/image_inpaint_synthetic/case01-toinpaint.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/image_inpaint_synthetic/case02-toinpaint.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/image_inpaint_synthetic/case03-toinpaint.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/image_inpaint_synthetic/case04-toinpaint.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/image_inpaint_synthetic/case05-toinpaint.png}
+            \end{subfigure}
+            \caption{Damaged image}
+        \end{figure}
+        \begin{align*}
+            \text{iteration} \leq 10,000 \text{ round } \hspace{1cm}
+            \frac{|| u_{new} - u_{old} ||}{|| u_{new} ||} \geq 10^{-4}
+        \end{align*}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Restoration result}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex1/timemarch01.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex1/timemarch02.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex1/timemarch03.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex1/timemarch04.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex1/timemarch05.png}
+            \end{subfigure}
+            \caption{Explicit time marching}
+        \end{figure}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex1/fixpoint01.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex1/fixpoint02.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex1/fixpoint03.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex1/fixpoint04.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex1/fixpoint05.png}
+            \end{subfigure}
+            \caption{Fixed point iteration }
+        \end{figure}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex1/splitbergman01.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex1/splitbergman02.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex1/splitbergman03.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex1/splitbergman04.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex1/splitbergman05.png}
+            \end{subfigure}
+            \caption{Split Bregman}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Performance of numerical method}
+        \begin{table}[H]
+        \centering
+        \captionsetup{justification=centering}
+            \begin{tabular}[ht]{|l|c|c|c|c|}
+                \hline
+                Method  & Processed time  (Second) & PSNR (dB) & SSIM \\
+                \hline
+                Explicit time marching & 120.68 & 16.72 & 0.9960 \\
+                Fixed point iteration & 74.81 & 38.67 & 0.9999 \\
+                \textcolor{red}{Split Bregman} & \textcolor{red}{14.06} & \textcolor{red}{39.42} & \textcolor{red}{0.9999}  \\
+                \hline
+            \end{tabular}
+        \caption{Average image restoration result of numerical method  \\  $\lambda = 250, \beta = 10^{-5}, \tau = 10^{-5}, \theta = 5 $}
+        \end{table}	
+    \end{frame}
+    \begin{frame}
+        \frametitle{Intial solution}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.8\linewidth}
+                \centering
+                \includegraphics[width=1\linewidth]{images/image_inpaint_synthetic/image_inital_solution.png}
+            \end{subfigure}
+            \caption{Find intial solution by using image pyramid}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Image pyramid}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.6\linewidth}
+                \centering
+                \includegraphics[width=0.8\linewidth]{images/image_inpaint_synthetic/image_pyramid.png}
+            \end{subfigure}
+            \caption{Image pyramid method}
+        \end{figure}
+        \let\thefootnote\relax\footnotetext{\tiny{	E.H. Andelson and C.H. Anderson and J.R. Bergen and P.J. Burt and J.M. Ogden. "Pyramid methods in image processing". 1984}}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Restoration result with image pyramid}
+        \begin{table}[H]
+            \centering
+            \begin{tabular}[ht]{|l|c|c|c|c|}
+                \hline
+                Iteration step  & Processed time  (Second) & PSNR (dB) & SSIM \\
+                \hline
+                Without Image pyramid & 17.38 & 39.42 & 0.9999 \\
+                10/1/1/10000 & 13.52 & 39.38 & 0.9999 \\
+                10/3/3/10000 & 11.86 & 39.54 & 0.9999 \\
+                10/10/10/10000 & 9.26 & 40.17 & 0.9999\\
+                100/1/1/10000 & 10.28 & 39.04 & 0.9999\\
+                100/3/3/10000 & 10.28 & 39.80 & 0.9999\\
+                100/10/10/10000 & 9.27 & 40.12 & 0.9999 \\
+                \hline
+            \end{tabular}
+            \caption{Average result of Split Bregman method with Image pyramid}
+        \end{table}	
+    \end{frame}
+    \begin{frame}
+        \frametitle{Iteration on Finest level}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.6\linewidth]{images/just10enough/only5time.png}
+                \caption{5 times}
+            \end{subfigure}
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.6\linewidth]{images/just10enough/only10time.png}
+                \caption{10 times}
+            \end{subfigure}
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.6\linewidth]{images/just10enough/only50time.png}			
+                \caption{50 times}
+            \end{subfigure}
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.6\linewidth]{images/just10enough/only100time.png}			
+                \caption{100 times}
+            \end{subfigure}
+            \caption{{\footnotesize image pyramid with iteration 10/10/10 but have difference iteration on finest step}}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Restoration result with only 10 iteration on finest step}
+        \begin{table}[H]
+            \centering
+            \begin{tabular}[ht]{|l|c|c|c|c|}
+                \hline
+                Iteration step  & Processed time  (Second) & PSNR (dB) & SSIM \\
+                \hline
+                Without Image pyramid & 0.37 & 17.26 & 0.9963  \\
+                10/1/1/10 & 0.40 & 28.54 & 0.9993 \\
+                \textcolor{red}{10/3/3/10} & \textcolor{red}{0.33} & \textcolor{red}{29.83}  & \textcolor{red}{0.9994} \\
+                10/10/10/10 & 0.38 & 32.56 & 0.9995 \\
+                100/1/1/10 & 0.34 & 31.50 & 0.9999 \\
+                100/3/3/10 & 0.36 & 31.99 & 0.9999 \\
+                100/10/10/10 & 0.38 & 33.39 & 0.9998 \\
+                \hline
+            \end{tabular}
+            \caption{{\small Average result of Resotration with only 10 itearation on finest step}}
+        \end{table}	
+    \end{frame}
+    \begin{frame}
+		\frametitle{Algorithm for Thai painting resotration}
+		\begin{figure}[H]
+			\centering
+			\begin{subfigure}{0.7\linewidth}
+				\centering
+				\includegraphics[width=1\linewidth]{images/method_thaiart/step_thaiart.png}
+			\end{subfigure}
+			\caption{Our method for Thai painting restoration}
+        \end{figure}
+	\end{frame}
+	\begin{frame}
+		\frametitle{Algorithm for Thai painting restoration}
+		\begin{figure}[H]
+			\centering
+			\begin{subfigure}{0.5\linewidth}
+				\centering
+				\includegraphics[width=1\linewidth]{images/method_thaiart/flowchart_thaiart.png}
+			\end{subfigure}
+			\caption{Our method's flow chart}
+		\end{figure}
+	\end{frame}
+    \begin{frame}
+        \frametitle{Thai painting restoration}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/thaiart/case01-original.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/thaiart/case02-original.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/thaiart/case03-original.png}
+            \end{subfigure}		
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/thaiart/case04-original.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/thaiart/case05-original.png}
+            \end{subfigure}
+            \caption{Original Thai painting}
+        \end{figure}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/thaiart/case01-toinpaint.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/thaiart/case02-toinpaint.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/thaiart/case03-toinpaint.png}			
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/thaiart/case04-toinpaint.png}			
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/thaiart/case05-toinpaint.png}			
+            \end{subfigure}
+            \caption{Damage Thai painting}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Thai painting restoration result}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex4/splitbergman_case01.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex4/splitbergman_case02.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex4/splitbergman_case03.png}			
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex4/splitbergman_case04.png}			
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex4/splitbergman_case05.png}			
+            \end{subfigure}
+            \caption{Split Breman}
+        \end{figure}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex4/multisplitbergman_case01.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex4/multisplitbergman_case02.png}
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex4/multisplitbergman_case03.png}			
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex4/multisplitbergman_case04.png}			
+            \end{subfigure}
+            \begin{subfigure}{0.15\linewidth}
+                \centering
+                \includegraphics[width=0.9\linewidth]{images/result_ex4/multisplitbergman_case05.png}			
+            \end{subfigure}
+            \caption{ผลการซ่อมแซมโดยวิธีการที่พัฒนาขึ้น}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Comparison between 2 methods}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.6\linewidth]{images/result_ex4_scaleup/original.png}
+                \caption{ภาพต้นฉบับ}
+            \end{subfigure}
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.6\linewidth]{images/result_ex4_scaleup/toinpaint.png}
+                \caption{ภาพที่เสียหาย}
+            \end{subfigure}
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.6\linewidth]{images/result_ex4_scaleup/splitbregman.png}			
+                \caption{วิธีสปริทเบรกแมน}
+            \end{subfigure}
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.6\linewidth]{images/result_ex4_scaleup/multisplitbregman.png}	
+                \caption{วิธีที่พัฒนาขึ้น}
+            \end{subfigure}
+            \caption{Comparison of images that have been expanded 4 times}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Thai paintg restoration result}
+        % เร็วกว่าประมาณ 7 เท่า
+        \begin{table}[H]
+            \centering
+            \begin{tabular}[ht]{|l|c|c|c|c|}
+                \hline
+                วิธีการ  & เวลาประมวล  (วินาที) & PSNR (dB) & SSIM \\
+                \hline
+                สปริทเบรกแมน & 2.72 & 34.89 & 1.0000 \\ 
+                วิธีการที่พัฒนาขึ้น & 0.39 & 35.30 & 1.0000 \\
+                \hline
+            \end{tabular}
+            \caption{Average Thai painting restoration}
+        \end{table}	
+    \end{frame}
+    \begin{frame}
+        \frametitle{Anime subtitle removal}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\linewidth]{images/inori-preview.png}
+            \caption{ Festival Asia Special Video - feat. Inori Aizawa }
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Lorem Ipsum}
+            \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.85\linewidth]{images/lorem4lang.png}
+            \caption{Lorem Ipsum ทั้ง 4 ภาษา \footnote{ \tiny{Lorem ipsum in difference language https://en.wikipedia.org/wiki/Lorem\_ipsum,  https://ja.wikipedia.org/wiki/Lorem\_ipsum and  https://th.wikipedia.org/wiki/ลอเร็มอิปซัม, 25 November 2018} } }
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Split video}
+            \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\linewidth]{images/inori-subbed-preview.png}
+            \caption{Split video into 5 parts}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+    \frametitle{Video and image}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.6\linewidth]{images/anime-frame.png}
+            \caption{Video is sequences of image}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Finding subtitle}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\linewidth]{images/subtitle-remove/thisisanimesubtitle.png}
+            \caption{Anime subtitle always has black border}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Finding subtitle}
+        \begin{figure}[H]
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.8\linewidth]{images/subtitle_detection/detection-original.png}
+                \caption{Anime with subtitle}
+            \end{subfigure}
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.8\linewidth]{images/subtitle_detection/detection-threshold.png}
+                \caption{mark black as white}
+            \end{subfigure}
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.8\linewidth]{images/subtitle_detection/detection-inverse.png}
+                \caption{inverse color}
+            \end{subfigure}
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.8\linewidth]{images/subtitle_detection/detection-blackfill.png}
+                \caption{remove white which attach to edge}
+            \end{subfigure}
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.8\linewidth]{images/subtitle_detection/detection-erode-opening.png}
+                \caption{remove smaller or larger object}
+            \end{subfigure}
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.8\linewidth]{images/subtitle_detection/detection-stoke.png}
+                \caption{expand inpaint domain}
+            \end{subfigure}
+            \caption{our method to finding subtitle}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Finding subtitle result}
+        \begin{table}[H]
+            \centering
+            \footnotesize
+            \begin{tabular}[ht]{|l|c|c|c|c|}
+                \hline
+                Language  & Pixel in inpaint domain & Pixel which detected & Pixel which error & Error (percent) \\
+                \hline
+                Thai & 23,222,220 & 24,083,125 & 2,141,201 & 9.22 \\
+                English & 27,278,745 & 28,598,424 & 3,714,321 & 13.62 \\
+                Japanese & 28,544,173 & 30,103,466 & 3,740,971 & 13.11 \\
+                \hline
+            \end{tabular}
+            \caption{ความคลาดเคลื่อนเฉลี่ยของการหาโดเมนต่อเติม ในบทบรรยายภาษาต่างๆ}
+        \end{table}	
+    \end{frame}
+    \begin{frame}
+        \frametitle{Sequence of image and intial solution}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\linewidth]{images/skipborrow/frame_sequence.png}
+            \caption{Image sequence in video which has subtitle}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Consider similarities with SSIM}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.95\linewidth]{images/skipborrow/prevframe.png}
+                \caption{Previous frame}
+            \end{subfigure}
+            \begin{subfigure}{0.45\linewidth}
+                \centering
+                \includegraphics[width=0.95\linewidth]{images/skipborrow/currentframe.png}
+                \caption{Current frame}
+            \end{subfigure}
+            \bigskip
+            \begin{subfigure}{0.45\linewidth}
+                \centering
+                \includegraphics[width=0.95\linewidth]{images/skipborrow/prevframeinverse.png}
+                \caption{Area to calculate SSIM in previous frame}
+            \end{subfigure}
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.95\linewidth]{images/skipborrow/currentframeinverse.png}
+                \caption{Area to calculate SSIM in current frame}
+            \end{subfigure}
+            \caption{Area to calculate SSIM for skip frame and borrow frame method}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Skip frame}  
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.6\linewidth]{images/skipborrow/flowchart-skip.png}
+            \caption{Skip frame method}
+        \end{figure}      
+    \end{frame}
+    \begin{frame}
+        \frametitle{Borrow frame}      
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.6\linewidth]{images/skipborrow/flowchart-borrow.png}
+            \caption{Borrow frame method}
+        \end{figure}   
+    \end{frame}
+    \begin{frame}
+        \frametitle{Skip and borrow frame}  
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.6\linewidth]{images/skipborrow/flowchart-skipandborrow.png}
+            \caption{Skip and borrow frame method}
+        \end{figure}        
+    \end{frame}
+    \begin{frame}
+        \frametitle{Skip/Borrow frame result}
+        \begin{table}[H]
+            \centering
+            \begin{tabular}[ht]{|l|c|c|c|c|}
+                \hline
+                Method  & Processed time  (Second) & PSNR (dB) & SSIM \\
+                \hline
+                Split Bregman with image pyramid & 141.29 & 31.39  &  0.9510\\
+                Skip frame & 89.29 & 29.07 & 0.9408 \\
+                Borrow frame & 132.78 & 32.20 & 0.9655\\
+                \textcolor{red}{Skip and borrow frame} & \textcolor{red}{75.76} & \textcolor{red}{29.33} & \textcolor{red}{0.9454} \\
+                \hline
+            \end{tabular}
+            \caption{Average result of removing subtitle from anime}
+        \end{table}	
+    \end{frame}
+    \begin{frame}
+        \frametitle{Algorithm for removing subtitle from anime}  
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.6\linewidth]{images/skipborrow/flowchart-skipandborrow.png}
+            \caption{Skip and borrow frame method}
+        \end{figure}        
+    \end{frame}
+    \begin{frame}
+        \frametitle{removing subtitle result}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.80\linewidth]{images/subtitle-remove/beforesubtitleremove.png}
+                \caption{Before}
+            \end{subfigure}
+            \begin{subfigure}{0.4\linewidth}
+                \centering
+                \includegraphics[width=0.80\linewidth]{images/subtitle-remove/aftersubtitleremove.png}
+                \caption{After}
+            \end{subfigure}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{removing subtitle result}
+        \begin{table}[H]
+            \centering
+            \captionsetup{justification=centering}
+            \begin{tabular}[ht]{|l|c|c|c|c|}
+                \hline
+                Method  & Processed time  (Second) & PSNR (dB) & SSIM \\
+                \hline
+                Split Bregman & 5073.08 & 32.88 & 0.9654 \\
+                Our method & 75.76 & 29.33 & 0.9454 \\
+                \hline
+            \end{tabular}
+            \caption{ผลการลบบทบรรยายออกจากอนิเมะเฉลี่ย\\โดยวิธีการสปริทเบรกแมนและวิธีการที่พัฒนาขึ้น}
+        \end{table}	
+    \end{frame}
+    \begin{frame}
+        \frametitle{ลองซ่อมแซมภาพศิลปะ}
+        \centering
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.7\linewidth]{images/colab_sample.png}
+        \end{figure}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.1\linewidth]{images/colab_qr.png}
+            \caption{ลองใช้งานได้ที่ https://bit.ly/demothai}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+		\frametitle{โปรแกรมลบคำบรรยาย}
+		\begin{figure}
+			\includegraphics[width=0.8\linewidth]{images/demo_anime/file.png}
+			\caption{ชุดไฟล์สำหรับลบคำบรรยาย (https://bit.ly/demo-anime-inpaint)}
+		\end{figure}
+		\begin{figure}
+			\includegraphics[width=0.8\linewidth]{images/demo_anime/notepad.png}
+			\caption{โค้ดภายใน SubtitleRemove.avs}
+		\end{figure}
+	\end{frame}
+    \begin{frame}
+        \centering
+        \Huge{ขอขอบคุณ}
+    \end{frame}
+\end{document}
