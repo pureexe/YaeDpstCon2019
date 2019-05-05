@@ -279,10 +279,10 @@
         \text{PSNR}  = 10 \cdot log_{10} ( \frac{1}{\sqrt{\text{MSE}}} )  \hspace{1cm}
         \end{align*}
         \begin{itemize}
-            \item[$\bullet$] MSE คือค่าคลาดเคลื่อนกำลังสองเฉลี่ยของภาพ โดยที่ MSE = $\frac{1}{nx \times ny} \sum (u - \tilde{u})^2 $
-            \item[$\bullet$] $u$ แทนภาพต้นฉบับ
-            \item[$\bullet$] $\tilde{u}$  แทนภาพที่ได้จากการซ่อมแซมโดยวิธีเชิงตัวเลข
-            \item[$\bullet$] PSNR มีหน่วยเป็น dB
+            \item[$\bullet$] MSE is mean square error which is MSE = $\frac{1}{nx \times ny} \sum (u - \tilde{u})^2 $
+            \item[$\bullet$] $u$ is original image.
+            \item[$\bullet$] $\tilde{u}$  is restored image from numerical method.
+            \item[$\bullet$] The unit of PSNR is the decibel (dB).
         \end{itemize}
     \end{frame}
     \begin{frame}
@@ -291,12 +291,13 @@
         \text{SSIM}(u,\tilde{u}) = \frac{(2\mu_u\mu_{\tilde{u}} + 0.0001)(2\sigma_{u\tilde{u}} + 0.0009)}{(\mu_u^2+\mu_{\tilde{u}}^2+0.0001)(\sigma_u^2+\sigma_{\tilde{u}}^2+0.0009)}
         \end{align*}
         \begin{itemize}
-            \item[$\bullet$] $u$ แทนภาพต้นฉบับ
-            \item[$\bullet$] $\tilde{u}$  แทนภาพต้นฉบับ และภาพที่ได้จากการซ่อมแซมโดยวิธีเชิงตัวเลข
-            \item[$\bullet$] $\mu_u$ คือค่าเฉลี่ยของ $u$
-            \item[$\bullet$] $\mu_{\tilde{u}}$ คือค่าเฉลี่ยของ $\tilde{u}$
-            \item[$\bullet$]  $\sigma_u$ คือความแปรปรวนของ $u$ 
-            \item[$\bullet$] $\sigma_{\tilde{u}}$ คือความแปรปรวนของ $\tilde{u}$
+            \item[$\bullet$] $u$ is original image.
+            \item[$\bullet$] $\tilde{u}$ is restored image from numerical method.
+            \item[$\bullet$] $\mu_u$ is average of $u$
+            \item[$\bullet$] $\mu_{\tilde{u}}$ is average of $\tilde{u}$
+            \item[$\bullet$]  $\sigma_u$ is variation of $u$ 
+            \item[$\bullet$] $\sigma_{\tilde{u}}$ is vriation of $\tilde{u}$
+            \item[$\bullet$] SSIM has range between 0 to 1.
         \end{itemize}
     \end{frame}
     \begin{frame}
@@ -667,22 +668,22 @@
             \begin{subfigure}{0.4\linewidth}
                 \centering
                 \includegraphics[width=0.6\linewidth]{images/result_ex4_scaleup/original.png}
-                \caption{ภาพต้นฉบับ}
+                \caption{Original image}
             \end{subfigure}
             \begin{subfigure}{0.4\linewidth}
                 \centering
                 \includegraphics[width=0.6\linewidth]{images/result_ex4_scaleup/toinpaint.png}
-                \caption{ภาพที่เสียหาย}
+                \caption{Damaged image}
             \end{subfigure}
             \begin{subfigure}{0.4\linewidth}
                 \centering
                 \includegraphics[width=0.6\linewidth]{images/result_ex4_scaleup/splitbregman.png}			
-                \caption{วิธีสปริทเบรกแมน}
+                \caption{Split Bremgan}
             \end{subfigure}
             \begin{subfigure}{0.4\linewidth}
                 \centering
                 \includegraphics[width=0.6\linewidth]{images/result_ex4_scaleup/multisplitbregman.png}	
-                \caption{วิธีที่พัฒนาขึ้น}
+                \caption{Our method}
             \end{subfigure}
             \caption{Comparison of images that have been expanded 4 times}
         \end{figure}
@@ -694,10 +695,10 @@
             \centering
             \begin{tabular}[ht]{|l|c|c|c|c|}
                 \hline
-                วิธีการ  & เวลาประมวล  (วินาที) & PSNR (dB) & SSIM \\
+                Method  & Processing time  (Second) & PSNR (dB) & SSIM \\
                 \hline
-                สปริทเบรกแมน & 2.72 & 34.89 & 1.0000 \\ 
-                วิธีการที่พัฒนาขึ้น & 0.39 & 35.30 & 1.0000 \\
+                Split Bregman & 2.72 & 34.89 & 1.0000 \\ 
+                Our method & 0.39 & 35.30 & 1.0000 \\
                 \hline
             \end{tabular}
             \caption{Average Thai painting restoration}
@@ -793,7 +794,7 @@
                 Japanese & 28,544,173 & 30,103,466 & 3,740,971 & 13.11 \\
                 \hline
             \end{tabular}
-            \caption{ความคลาดเคลื่อนเฉลี่ยของการหาโดเมนต่อเติม ในบทบรรยายภาษาต่างๆ}
+            \caption{Average error of finding inpainting domain in various language subtitles}
         \end{table}	
     \end{frame}
     \begin{frame}
@@ -862,7 +863,7 @@
             \centering
             \begin{tabular}[ht]{|l|c|c|c|c|}
                 \hline
-                Method  & Processed time  (Second) & PSNR (dB) & SSIM \\
+                Method  & Processing time  (Second) & PSNR (dB) & SSIM \\
                 \hline
                 Split Bregman with image pyramid & 141.29 & 31.39  &  0.9510\\
                 Skip frame & 89.29 & 29.07 & 0.9408 \\
