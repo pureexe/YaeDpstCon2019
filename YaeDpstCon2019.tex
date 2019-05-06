@@ -36,12 +36,12 @@
 	\usetheme{Madrid}
     \usecolortheme[named=PineGreen]{structure}
 }
-\title[วิธีเชิงตัวเลขสำหรับต่อเติมภาพ]{A new numerical algorithm for TV-based image inpainting with its applications for restoring ancient Thai painting images and removing subtitles from animes}
+\title[numerical algorithm for image inpainting]{A new numerical algorithm for TV-based image inpainting with its applications for restoring ancient Thai painting images and removing subtitles from animes}
 \author[Pakkapon]{Pakkapon Phongthawee}
 \institute[Silpakorn]{
  	Department of Mathematics\\
  	Silpakorn University \\}
-\date[UAMC 2019]{DPST Student Conference on Science and Technology\\June 21-23,2019}
+\date[DPSTCON 2019]{DPST Student Conference on Science and Technology\\June 21-23,2019}
  
  \AtBeginSubsection[]{
  	\begin{frame}<beamer>
@@ -122,7 +122,7 @@
         \let\thefootnote\relax\footnotetext{\tiny{T.F. Chan and J. Shen , “Mathematical models of local non-texture inpaintings”, SIAM Journal on Applied Mathematics, vol. 62, no. 3, pp. 1019–1043, 2001.}}	
     \end{frame}    
     \begin{frame}
-        \frametitle{Numerical method}
+        \frametitle{Numerical algorithm}
         \begin{itemize}
             \item[(1)] Explicit time marching
             \item[(2)] Fixed point iteration
@@ -196,7 +196,7 @@
         \end{align*}
         $$ \Big \downarrow$$
 		\begin{align*}
-		    \min_{u,\boldsymbol{w}} \{ \mathcal{J}(u,\boldsymbol{w}) = \dfrac{1}{2} \int_{\Omega} \lambda(u-z)^2 d\Omega +  \int_{\Omega}  |\boldsymbol{w}| d\Omega \} \hspace{1cm}\text{ เมื่อ } w = \nabla u
+		    \min_{u,\boldsymbol{w}} \{ \mathcal{J}(u,\boldsymbol{w}) = \dfrac{1}{2} \int_{\Omega} \lambda(u-z)^2 d\Omega +  \int_{\Omega}  |\boldsymbol{w}| d\Omega \} \hspace{1cm}\text{ which } w = \nabla u
         \end{align*}
         $$ \Big \downarrow$$
 		\begin{align*}
@@ -545,7 +545,7 @@
 				\centering
 				\includegraphics[width=1\linewidth]{images/method_thaiart/step_thaiart.png}
 			\end{subfigure}
-			\caption{Our method for Thai painting restoration}
+			\caption{Our algorithm for Thai painting restoration}
         \end{figure}
 	\end{frame}
 	\begin{frame}
@@ -556,7 +556,7 @@
 				\centering
 				\includegraphics[width=1\linewidth]{images/method_thaiart/flowchart_thaiart.png}
 			\end{subfigure}
-			\caption{Our method's flow chart}
+			\caption{Our algorithm's flow chart}
 		\end{figure}
 	\end{frame}
     \begin{frame}
@@ -658,11 +658,11 @@
                 \centering
                 \includegraphics[width=0.9\linewidth]{images/result_ex4/multisplitbergman_case05.png}			
             \end{subfigure}
-            \caption{ผลการซ่อมแซมโดยวิธีการที่พัฒนาขึ้น}
+            \caption{Our algorithm}
         \end{figure}
     \end{frame}
     \begin{frame}
-        \frametitle{Comparison between 2 methods}
+        \frametitle{Comparison between 2 algorithms}
         \begin{figure}[H]
             \centering
             \begin{subfigure}{0.4\linewidth}
@@ -683,22 +683,20 @@
             \begin{subfigure}{0.4\linewidth}
                 \centering
                 \includegraphics[width=0.6\linewidth]{images/result_ex4_scaleup/multisplitbregman.png}	
-                \caption{Our method}
+                \caption{Our algorithm}
             \end{subfigure}
             \caption{Comparison of images that have been expanded 4 times}
         \end{figure}
     \end{frame}
     \begin{frame}
-        \frametitle{Thai paintg restoration result}
-        % เร็วกว่าประมาณ 7 เท่า
-        \begin{table}[H]
+        \frametitle{Thai painting restoration result}        \begin{table}[H]
             \centering
             \begin{tabular}[ht]{|l|c|c|c|c|}
                 \hline
                 Method  & Processing time  (Second) & PSNR (dB) & SSIM \\
                 \hline
                 Split Bregman & 2.72 & 34.89 & 1.0000 \\ 
-                Our method & 0.39 & 35.30 & 1.0000 \\
+                Our algorithm & 0.39 & 35.30 & 1.0000 \\
                 \hline
             \end{tabular}
             \caption{Average Thai painting restoration}
@@ -814,21 +812,21 @@
                 \includegraphics[width=0.95\linewidth]{images/skipborrow/prevframe.png}
                 \caption{Previous frame}
             \end{subfigure}
-            \begin{subfigure}{0.45\linewidth}
+            \begin{subfigure}{0.4\linewidth}
                 \centering
                 \includegraphics[width=0.95\linewidth]{images/skipborrow/currentframe.png}
                 \caption{Current frame}
             \end{subfigure}
             \bigskip
-            \begin{subfigure}{0.45\linewidth}
+            \begin{subfigure}{0.4\linewidth}
                 \centering
                 \includegraphics[width=0.95\linewidth]{images/skipborrow/prevframeinverse.png}
-                \caption{Area to calculate SSIM in previous frame}
+                \caption{Area to find SSIM in previous frame}
             \end{subfigure}
             \begin{subfigure}{0.4\linewidth}
                 \centering
                 \includegraphics[width=0.95\linewidth]{images/skipborrow/currentframeinverse.png}
-                \caption{Area to calculate SSIM in current frame}
+                \caption{Area to find SSIM in current frame}
             \end{subfigure}
             \caption{Area to calculate SSIM for skip frame and borrow frame method}
         \end{figure}
@@ -883,7 +881,7 @@
         \end{figure}        
     \end{frame}
     \begin{frame}
-        \frametitle{removing subtitle result}
+        \frametitle{Removing subtitle result}
         \begin{figure}[H]
             \centering
             \begin{subfigure}{0.4\linewidth}
@@ -908,14 +906,15 @@
                 Method  & Processed time  (Second) & PSNR (dB) & SSIM \\
                 \hline
                 Split Bregman & 5073.08 & 32.88 & 0.9654 \\
-                Our method & 75.76 & 29.33 & 0.9454 \\
+                Our algorithm & 75.76 & 29.33 & 0.9454 \\
                 \hline
             \end{tabular}
-            \caption{ผลการลบบทบรรยายออกจากอนิเมะเฉลี่ย\\โดยวิธีการสปริทเบรกแมนและวิธีการที่พัฒนาขึ้น}
+            \caption{
+                Average result of removing subtitle with Split Bregman and our algorithm }
         \end{table}	
     \end{frame}
     \begin{frame}
-        \frametitle{ลองซ่อมแซมภาพศิลปะ}
+        \frametitle{Thai painting restoration}
         \centering
         \begin{figure}[H]
             \centering
@@ -924,22 +923,22 @@
         \begin{figure}[H]
             \centering
             \includegraphics[width=0.1\linewidth]{images/colab_qr.png}
-            \caption{ลองใช้งานได้ที่ https://bit.ly/demothai}
+            \caption{Try by yourself at https://bit.ly/demothai}
         \end{figure}
     \end{frame}
     \begin{frame}
-		\frametitle{โปรแกรมลบคำบรรยาย}
+		\frametitle{Program for removing subtitle from anime}
 		\begin{figure}
 			\includegraphics[width=0.8\linewidth]{images/demo_anime/file.png}
-			\caption{ชุดไฟล์สำหรับลบคำบรรยาย (https://bit.ly/demo-anime-inpaint)}
+			\caption{file for removing subtitle (https://bit.ly/demo-ani me-inpaint)}
 		\end{figure}
 		\begin{figure}
 			\includegraphics[width=0.8\linewidth]{images/demo_anime/notepad.png}
-			\caption{โค้ดภายใน SubtitleRemove.avs}
+			\caption{source code in SubtitleRemove.avs}
 		\end{figure}
 	\end{frame}
     \begin{frame}
         \centering
-        \Huge{ขอขอบคุณ}
+        \Huge{Thank you}
     \end{frame}
 \end{document}
