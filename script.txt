@@ -1,0 +1,104 @@
+Good Morning, My name is Pakkapon Phongthawee from silpakorn university. today i would like to present my project. A new numerical algorithm for TV-based image inpainting with its applications for restoring acient Thai painting images and removing subtitles from animes.
+ 
+In this project we will talk about image inpainting which is a method to restoring damaged image like picture (a) in area (b) to get picture (c)
+
+We have to seperate problem into grayscale image and color image
+
+for grayscale image we defined image domain omega, inpainting domain which is damaged part D. u is restored image and z is damaged image.
+
+Total variation model for grayscale inpainting was developed by chan and shen which improve from ROF model 
+
+ROF model have 3 numerical algoirthm we can adapt it to our used in our work but first we need to find the fastest to use as base for our algorithm
+
+First, Explicit time marching from the model we use calculus of variation then we get the pde which called euler laugrang equation, when we find solution of this pde, we get solution of model too.
+
+We do this iteration utill u converge
+
+it has a problem because it need a large tau to converge faster but it will diverge if tau large than one
+
+Second, Fixed point iteration we do iteration over this untill u is converge
+
+but in the middle of image like this we can't find absolute gradient u so we add little beta but the problem is beta to small it converge slowly but if it too large it will not converge to our solution
+
+Split bregman is avoid the problem by change u to w with condition and then change back to no condition form
+
+Then we solve this moodel with alternating method first find u use new u to find w then update b  until u is converge
+
+To inpaint in color image gray scale is just one shade of color. now we move to 3 color which are red green and blue
+
+so from this we change to vector like this
+
+for model we change from this to this.
+
+and for model in split bregman we change from this to this 
+
+for measurement restoration quality we use two method 
+
+first, PSNR use for tell how quality in each pixel close to original. higher is better 
+
+second, SSIM use for tell how structer same with original. for example when we restoring circle, do we get circle or square. SSIM is in range 0 to 1. and close to one is better
+
+Then we test three algorithm with five syntatic image under these condition
+
+here is a result
+
+Split bregman has best quality in both PSNR and SSIM and it has lowest process time So we will create new algorithm base on split bregman
+
+Our new algorithm for restoration thai painting has concept from intial solution. i belive that good inital solution make iteration converge faster. so we use image pyramid which inpaint small image and scale up to use as inital solution.
+
+we will use four level of image pyramid 
+
+when we use more iteration in coarse image level is converge faster.
+
+i had found that iteration in finest level in just a few step is nearly to be a solution
+
+so we limit to do iteration in finest step only 10 time and we found that 10 in coarse step 3 in the middle and 10 in find step is fastest iteration.
+
+Our algorithm for Thai painting restoration is downsize image 4 step, split bregman then upscale repeat it 4 time to get the result
+
+it can represent to flow chart like this. 
+
+Then we test our algorithm with 5 thai painting 
+
+here is result.
+
+you will see both area nearly the original image.
+
+But Our algorithm has seven time faster with better quality in PSNR in SSIM 
+
+Anime subtitle removal we use one-minute anime length.
+
+Since our anime doesn't has subtitle so we create 20 line of subtitle by using lorem ipsum.
+
+split video into fivfe to create 5 example.
+
+Since video is sequence of image so we can use previous algorithm in each image.
+
+we also develop own algorithm to finding subtitle by assume as all anime subtitle always has black border
+
+To find it, we mark black color as white, inverse color, remove white color which attach to edge, remove smaller or larger object. and expend it. 
+
+our finding subtitle algorithm have error about 11 percent.
+
+we still use concept about good inital solution. for video we believe that previous frame is good to be intial solution.
+
+but we will use as intial solution if current frame close to previous frame. so we consider similarities by calculate SSIM outside inpaint domain which are the red area in this pic.
+
+We create 3 version of our algorithm for anime, first, skip frame. if ssim more than 0.95 use previous frame as result 
+
+borrow frame, if ssim more than 0.9 use previous frame as inital solution 
+
+skip and borrow frame, if ssim more than 0.95 we use previous frame as result if more than 0.9 we use as intial solution
+
+Skip and borrow frame technique is fastest method
+
+so we proposed skip and borrow technique as our algorithm for removing subtitle
+
+here is the result of removing subtitle
+
+to compare with split bregman, our algorithm is 67 time faster
+
+we provied some demo which you can access at bit.ly/demothai.
+
+
+
