@@ -1,4 +1,4 @@
-Good Morning, My name is Pakkapon Phongthawee from silpakorn university. today i would like to present my project. A new numerical algorithm for TV-based image inpainting with its applications for restoring acient Thai painting images and removing subtitles from animes.
+Good Morning, My name is Pakkapon Phongthawee from silpakorn university. today i would like to present my project. A new numerical algorithm for TV-based image inpainting with its applications for restoring ancient Thai painting images and removing subtitles from animes.
  
 In this project we will talk about image inpainting which is a method to restoring damaged image like picture (a) in area (b) to get picture (c)
 
@@ -18,7 +18,7 @@ it has a problem because it need a large tau to converge faster but it will dive
 
 Second, Fixed point iteration we do iteration over this untill u is converge
 
-but in the middle of image like this we can't find absolute gradient u so we add little beta but the problem is beta to small it converge slowly but if it too large it will not converge to our solution
+but in the middle of image like this we can't find absolute gradient u so we add little beta but the problem is beta to small it converge too slow  but if it too large it will not converge to our solution
 
 Split bregman is avoid the problem by change u to w with condition and then change back to no condition form
 
@@ -52,7 +52,7 @@ when we use more iteration in coarse image level is converge faster.
 
 i had found that iteration in finest level in just a few step is nearly to be a solution
 
-so we limit to do iteration in finest step only 10 time and we found that 10 in coarse step 3 in the middle and 10 in find step is fastest iteration.
+so we limit to do iteration in finest step only 10 time and we found that 10 in coarse step 3 in the middle and 10 in fine step is fastest iteration.
 
 Our algorithm for Thai painting restoration is downsize image 4 step, split bregman then upscale repeat it 4 time to get the result
 
@@ -62,7 +62,7 @@ Then we test our algorithm with 5 thai painting
 
 here is result.
 
-you will see both area nearly the original image.
+you will see both are nearly the original image.
 
 But Our algorithm has seven time faster with better quality in PSNR in SSIM 
 
@@ -70,7 +70,7 @@ Anime subtitle removal we use one-minute anime length.
 
 Since our anime doesn't has subtitle so we create 20 line of subtitle by using lorem ipsum.
 
-split video into fivfe to create 5 example.
+split video into five to create 5 example.
 
 Since video is sequence of image so we can use previous algorithm in each image.
 
@@ -100,5 +100,8 @@ to compare with split bregman, our algorithm is 67 time faster
 
 we provied some demo which you can access at bit.ly/demothai.
 
+and we also provide anime demo which can acces here
+
+thank you.
 
 

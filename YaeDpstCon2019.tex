@@ -49,11 +49,25 @@
  		\tableofcontents [currentsection,currentsubsection]
      \end{frame}
 }
+
+\newcommand{\backupbegin}{
+   \newcounter{finalframe}
+   \setcounter{finalframe}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+   \setcounter{framenumber}{\value{finalframe}}
+}
+
+
 %\setbeamertemplate{item}[square]
 %============================================================================
 \begin{document}
+    % \begin{frame} \titlepage \end{frame}
     \begin{frame}
-        \titlepage 
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=1\linewidth]{images/cover.png}
+        \end{figure}
     \end{frame}
     \begin{frame}
         \frametitle{Image inpainting} 
@@ -943,4 +957,35 @@
         \centering
         \Huge{Thank you}
     \end{frame}
+    \backupbegin
+    \begin{frame}
+        \frametitle{Why we need to remove subtitle}
+        \begin{figure}
+			\includegraphics[width=0.8\linewidth]{images/q_and_a/theleader.png}
+			\caption{ Ling Feng Zhe has Chinese subtitle because it had produced in China}
+		\end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{If we don't remove subtitle}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.45\linewidth}
+                \centering
+                \includegraphics[width=0.90\linewidth]{images/q_and_a/paopunjin.jpg}
+                \caption{Justice Pao (Ch. 3)}
+            \end{subfigure}
+            \begin{subfigure}{0.45\linewidth}
+                \centering
+                \includegraphics[width=0.90\linewidth]{images/q_and_a/sample_of_subtitle_replace.png}
+                \caption{Wise and Foolish (Thai PBS)}
+            \end{subfigure}
+            \begin{subfigure}{0.45\linewidth}
+                \centering
+                \includegraphics[width=0.90\linewidth]{images/q_and_a/nhk_subtitle.png}
+                \caption{Nuclear ghost town (NHK World)}
+            \end{subfigure}
+            \caption{How TV channel work on forgien language subtitle}
+        \end{figure}
+    \end{frame}
+    \backupend
 \end{document}
