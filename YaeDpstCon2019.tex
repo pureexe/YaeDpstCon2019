@@ -552,7 +552,7 @@
         \end{table}	
     \end{frame}
     \begin{frame}
-		\frametitle{Algorithm for Thai painting resotration}
+		\frametitle{Algorithm for Thai painting restoration}
 		\begin{figure}[H]
 			\centering
 			\begin{subfigure}{0.7\linewidth}
@@ -711,7 +711,7 @@
                 Method  & Processing time  (Second) & PSNR (dB) & SSIM \\
                 \hline
                 Split Bregman & 2.72 & 34.89 & 1.0000 \\ 
-                Our algorithm & 0.39 & 35.30 & 1.0000 \\
+                \textcolor{red}{Our algorithm} & \textcolor{red}{0.39} & \textcolor{red}{35.30} & \textcolor{red}{1.0000} \\
                 \hline
             \end{tabular}
             \caption{Average Thai painting restoration}
@@ -730,7 +730,7 @@
             \begin{figure}[H]
             \centering
             \includegraphics[width=0.85\linewidth]{images/lorem4lang.png}
-            \caption{Lorem Ipsum ทั้ง 4 ภาษา \footnote{ \tiny{Lorem ipsum in difference language https://en.wikipedia.org/wiki/Lorem\_ipsum,  https://ja.wikipedia.org/wiki/Lorem\_ipsum and  https://th.wikipedia.org/wiki/ลอเร็มอิปซัม, 25 November 2018} } }
+            \caption{Lorem Ipsum in 4 languages \footnote{ \tiny{Lorem ipsum in difference language https://en.wikipedia.org/wiki/Lorem\_ipsum,  https://ja.wikipedia.org/wiki/Lorem\_ipsum and  https://th.wikipedia.org/wiki/ลอเร็มอิปซัม, 25 November 2018} } }
         \end{figure}
     \end{frame}
     \begin{frame}
@@ -900,20 +900,21 @@
         \frametitle{Removing subtitle result}
         \begin{figure}[H]
             \centering
-            \begin{subfigure}{0.4\linewidth}
+            \begin{subfigure}{0.45\linewidth}
                 \centering
-                \includegraphics[width=0.80\linewidth]{images/subtitle-remove/beforesubtitleremove.png}
+                \includegraphics[width=0.97\linewidth]{images/subtitle-remove/beforesubtitleremove.png}
                 \caption{Before}
             \end{subfigure}
-            \begin{subfigure}{0.4\linewidth}
+            \begin{subfigure}{0.45\linewidth}
                 \centering
-                \includegraphics[width=0.80\linewidth]{images/subtitle-remove/aftersubtitleremove.png}
+                \includegraphics[width=0.95\linewidth]{images/subtitle-remove/aftersubtitleremove.png}
                 \caption{After}
             \end{subfigure}
+            \caption{sample frame of inpainting result}
         \end{figure}
     \end{frame}
     \begin{frame}
-        \frametitle{removing subtitle result}
+        \frametitle{Removing subtitle result}
         \begin{table}[H]
             \centering
             \captionsetup{justification=centering}
@@ -922,7 +923,7 @@
                 Method  & Processed time  (Second) & PSNR (dB) & SSIM \\
                 \hline
                 Split Bregman & 5073.08 & 32.88 & 0.9654 \\
-                Our algorithm & 75.76 & 29.33 & 0.9454 \\
+                \textcolor{red}{Our algorithm} & \textcolor{red}{75.76} & \textcolor{red}{29.33} & \textcolor{red}{0.9454} \\
                 \hline
             \end{tabular}
             \caption{
@@ -946,7 +947,7 @@
 		\frametitle{Program for removing subtitle from anime}
 		\begin{figure}
 			\includegraphics[width=0.8\linewidth]{images/demo_anime/file.png}
-			\caption{file for removing subtitle (https://bit.ly/demo-ani me-inpaint)}
+			\caption{file for removing subtitle (https://bit.ly/demo-anime-inpaint)}
 		\end{figure}
 		\begin{figure}
 			\includegraphics[width=0.8\linewidth]{images/demo_anime/notepad.png}

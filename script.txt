@@ -18,7 +18,7 @@ it has a problem because it needs a large tau to converge faster but it will div
 
 Second, Fixed point iteration we do iteration over this until u is converge
 
-but in the middle of image like this we can't find absolute gradient u so we add little beta but the problem is beta to small it converge too slow  but if it is too large it will not converge to our solution
+but in the middle of image like this we can't find absolute gradient u so we add little beta but the problem is beta to? small it converge too slow  but if it is too large it will not converge to our solution
 
 Split bregman is avoid the problem by change u to w with condition and then change back to no condition form
 
@@ -44,7 +44,7 @@ here is a result
 
 Split bregman has the best quality in both PSNR and SSIM and it has the lowest process time So we will create new algorithm base on split bregman
 
-Our new algorithm for restoration thai painting has concept from initial solution.wei believe that good initial solution make iteration converge faster. so we use image pyramid which inpaint small image and scale up to use as initial solution.
+Our new algorithm for restoration thai painting has concept from initial solution.we believe that good initial solution make iteration converge faster. so we use image pyramid which inpaint small image and scale up to use as initial solution.
 
 we will use four level of image-pyramid
 
@@ -80,7 +80,7 @@ To find it, we mark black color as white, inverse color, remove white color whic
 
 our finding subtitle algorithm have error about 11 percent.
 
-we still use concept about good initial solution. for video we believe that previous frame is good to be initial solution.
+we still use concept about good initial solution. for video, we believe that previous frame is good to be initial solution.
 
 but we will use as initial solution if current frame close to previous frame. so we consider similarities by calculate SSIM outside inpaint domain which are the red area in this pic.
 
