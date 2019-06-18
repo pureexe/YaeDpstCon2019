@@ -10,9 +10,9 @@ Total variation model for grayscale inpainting was developed by chan and shen wh
 
 Since ROF model have 3 numerical algorithm. we can adapt it to use in our work but first we need to find the fastest algorithm to use as base for our algorithm.
 
-First, Explicit time marching. from the model we use calculus of variation then we get the pde which called Euler–Lagrange equation, when we find solution of this pde, we get solution of model too.
+First, Explicit time marching. from the model we use calculus of variation then we get the pde which called Euler-Lagrange equation, when we find solution of this pde, we get solution of model too.
 
-We do this iteration until u converge
+We solve PDE by do this iteration until u converge
 
 it has a problem because it needs a large tau to converge faster but it will diverge if tau large than one
 
@@ -32,7 +32,7 @@ for model we change from this to this.
 
 and for model in split bregman we change from this to this 
 
-for measurement restoration quality we use two method 
+for measurement restoration quality, we use two method 
 
 first, PSNR use for tell how quality in each pixel close to original. higher is better 
 
