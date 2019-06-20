@@ -1,4 +1,4 @@
-Good Morning, My name is Pakkapon Phongthawee from Silpakorn University. Today I would like to present my project. A new numerical algorithm for TV-based image inpainting with its applications for restoring ancient Thai painting images and removing subtitles from animes.
+Good Afternoon, My name is Pakkapon Phongthawee from Silpakorn University. Today I would like to present my project. A new numerical algorithm for TV-based image inpainting with its applications for restoring ancient Thai painting images and removing subtitles from animes.
  
 In this project we will talk about image inpainting which is a method to restoring damaged image like picture (a) in area (b) to get picture (c)
 
@@ -8,7 +8,7 @@ for grayscale image, we defined image domain omega, inpainting domain which is d
 
 Total variation model for grayscale inpainting was developed by chan and shen which improve from ROF model 
 
-Since ROF model have 3 numerical algorithm. we can adapt it to use in our work but first we need to find the fastest algorithm to use as base for our algorithm.
+Since ROF model have 3 numerical algorithm. we can adapt it to use in our work but we need to find the fastest algorithm to use as base for our algorithm.
 
 First, Explicit time marching. from the model we use calculus of variation then we get the pde which called Euler-Lagrange equation, when we find solution of this pde, we get solution of model too.
 
@@ -42,15 +42,15 @@ Then we test three algorithm with five syntactic image under these conditions
 
 here is a result
 
-Split bregman has the best quality in both PSNR and SSIM and it has the lowest process time So we will create new algorithm base on split bregman
+Split bregman has the best quality in both PSNR and SSIM and it has the fastest process time So we will create new algorithm base on split bregman
 
-Our new algorithm for restoration thai painting has concept from initial solution.we believe that good initial solution make iteration converge faster. so we use image pyramid which inpaint small image and scale up to use as initial solution.
+Our new algorithm has concept from initial solution. we believe that good initial solution make iteration converge faster. so we use image pyramid which inpaint small image and scale up to use as initial solution.
 
 we will use four level of image-pyramid
 
 when we use more iteration in coarse image level is converge faster.
 
-I had found that iteration in finest level in just a few steps is nearly to be a solution
+but we had found that iteration in finest level in just a few steps is nearly to be a solution
 
 so we limit to do iteration in finest step only 10 times and we found that 10 in coarse step 3 in the middle and 10 in fine step is fastest iteration.
 
