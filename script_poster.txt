@@ -2,9 +2,9 @@ Good Afternoon, My name is Pakkapon Phongthawee from Silpakorn University. Today
 
 In this project, we will talk about Image inpainting which is a method to restoring damaged image. like we have this damage image which is the white part. we need to recovery it to something like this.
 
-In Thailand, We have a lot of ancient thai painting which are damaged because a time we pass. so we can use this project to save our painting.
+In Thailand, We have a lot of ancient thai painting which are damaged because a time has pass. so we can use this project to save our painting.
 
-To talk about painting. we defined Omega is image domain which is square image. in image have damaged part we called it inpainting domain that denote by D We need to fix damaged image Z which contain D by searching U image which is origal image. 
+To talk about in painting. we defined Omega is image domain which is square image. in image have damaged part we called it inpainting domain that denote by D We need to fix damaged image Z which contain D by searching U image which is origal image. 
 
 We can search orignal image U from Z by compute solution of this model.
 
@@ -18,9 +18,11 @@ Our new algorithm has concept from initial solution. we believe that good initia
 
 we will use four level of image-pyramid
 
-but we had found that iteration in finest level in just a few steps is nearly to be a solution
+but we had found that iteration in finest level in just a few steps is nearly to be a solution so we limit finest level iteration just 10 times
 
 Then we compare our algorithm with split bregman on 5 thai painting 
+
+And now we have algorithm for ancient Thai painting restoration  we can adapt it to remove subtitle from anime because video is a sequence of image so we can use anctient painting algorithm in each image.
 
 For Anime subtitle removal, we use one-minute video 
 
@@ -28,13 +30,11 @@ we create 20 line of subtitles by using lorem ipsum.
 
 split video into five to create 5 example.
 
-Since video is a sequence of image so we can use previous algorithm in each image.
-
 we also develop own algorithm to finding subtitles by assume as all anime subtitles always has black border
 
 we still use concept about good initial solution. for video, we believe that previous frame is good to be initial solution.
 
-but we will use as initial solution if current frame close to previous frame. so we consider similarities by calculate SSIM outside inpaint domain which are the red area in this pic.
+but we will use initial solution if current frame close to previous frame. so we consider similarities by calculate SSIM outside inpaint domain which are the red area in this pic.
 
 For more rapid time of processing we also invent skip and borrow frame technique which is if ssim more than 0.95 we use previous frame as result if more than 0.9 we use as initial solution
 
